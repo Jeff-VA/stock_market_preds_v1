@@ -1,2 +1,7 @@
 stock_data.csv
 tickers.csv
+income_statement.csv
+balance_sheet.csv
+cashflow.csv
+earnings_dates.csv
+api_keys.json
