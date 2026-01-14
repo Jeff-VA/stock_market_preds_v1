@@ -1,5 +1,6 @@
 WITH cte_news AS (
-    SELECT DISTINCT TO_DATE(created_at, 'yyyy-MM-dd') AS news_date
+    SELECT DISTINCT id AS news_article_id
+        , TO_DATE(created_at, 'yyyy-MM-dd') AS news_date
         , created_at
         , symbols
         , explode(SPLIT(symbols, ',')) AS symbol
@@ -17,7 +18,8 @@ WITH cte_news AS (
     FROM stocks
 )
 
-SELECT n.symbol
+SELECT n.news_article_id
+    , n.symbol
     , n.news_date
     , n.article_text
     , s.percent_daily_price_change
