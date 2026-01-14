@@ -4,7 +4,7 @@ WITH cte_news AS (
         , symbols
         , explode(SPLIT(symbols, ',')) AS symbol
         , 'Headline: ' || headline 
-            || ' Summary: ' || summary 
+            || ' Summary: ' || COALESCE(summary, '')
             || ' All Symbols Referenced in Article: ' || symbols AS article_text
     FROM news
 )
@@ -12,7 +12,7 @@ WITH cte_news AS (
 , cte_articles_ranked(
     SELECT news_date
         , symbol
-        , 'News Article Number ' 
+        , 'Article Number ' 
             || ROW_NUMBER() OVER(PARTITION BY news_date, symbol ORDER BY created_at)
             || ': '
             || article_text AS ranked_article_text
