@@ -10,25 +10,6 @@ WITH cte_news AS (
     FROM news
 )
 
-, cte_articles_ranked(
-    SELECT news_date
-        , symbol
-        , 'Article Number ' 
-            || ROW_NUMBER() OVER(PARTITION BY news_date, symbol ORDER BY created_at)
-            || ': '
-            || article_text AS ranked_article_text
-    FROM cte_news
-)
-
-, cte_daily_news_agg AS (
-    SELECT news_date
-        , symbol
-        , ARRAY_JOIN(ARRAY_AGG(ranked_article_text), '    /n/n/n/n/n     ') AS daily_news_text
-    FROM cte_articles_ranked
-    GROUP BY news_date
-        , symbol
-)
-
 , cte_stock_prices AS (
     SELECT TO_DATE(timestamp, 'yyyy-MM-dd') AS stock_date
         , symbol
@@ -38,9 +19,9 @@ WITH cte_news AS (
 
 SELECT n.symbol
     , n.news_date
-    , n.daily_news_text
+    , n.article_text
     , s.percent_daily_price_change
-FROM cte_daily_news_agg n 
+FROM cte_news n 
     JOIN cte_stock_prices s 
         ON n.symbol = s.symbol
         --join next day's stock data to get percent change
