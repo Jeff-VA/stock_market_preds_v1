@@ -3,27 +3,28 @@ WITH cte_news AS (
         , created_at
         , symbols
         , explode(SPLIT(symbols, ',')) AS symbol
-        , 'Headline: ' || headline 
-            || ' Summary: ' || COALESCE(summary, '')
-            -- || ' All Symbols Referenced in Article: ' || symbols 
-            AS article_text
+        -- , 'Headline: ' || headline 
+        --     || ' Summary: ' || COALESCE(summary, '')
+        --     -- || ' All Symbols Referenced in Article: ' || symbols 
+        --     AS article_text
+        , headline
     FROM news
 )
 
 , cte_articles_ranked(
     SELECT news_date
         , symbol
-        , 'Article Number ' 
+        , 'Article ' 
             || ROW_NUMBER() OVER(PARTITION BY news_date, symbol ORDER BY created_at)
             || ': '
-            || article_text AS ranked_article_text
+            || headline AS ranked_article_text
     FROM cte_news
 )
 
 , cte_daily_news_agg AS (
     SELECT news_date
         , symbol
-        , ARRAY_JOIN(ARRAY_AGG(ranked_article_text), '    /n/n/n/n/n     ') AS daily_news_text
+        , ARRAY_JOIN(ARRAY_AGG(ranked_article_text), ' /n ') AS daily_news_text
     FROM cte_articles_ranked
     GROUP BY news_date
         , symbol
