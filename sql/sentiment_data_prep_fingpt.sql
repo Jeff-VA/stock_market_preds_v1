@@ -5,7 +5,7 @@ WITH cte_news AS (
         , symbols
         , explode(SPLIT(symbols, ',')) AS symbol
         , 'Headline: ' || headline 
-            -- || ' Summary: ' || COALESCE(summary, '')
+             || ' Summary: ' || COALESCE(summary, '')
             -- || ' All Symbols Referenced in Article: ' || symbols 
             AS article_text
     FROM news
